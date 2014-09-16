@@ -26,7 +26,6 @@ window.onload = function() {
         }
     });
     document.body.addEventListener("keyup", function(event) {
-        // ship.setSpeed(0);
         switch (event.keyCode) {
             case 38: //up
                 thrusting = false;
@@ -61,13 +60,14 @@ window.onload = function() {
         context.translate(ship.x, ship.y);
         context.rotate(ship.direction);
         context.beginPath();
-        context.moveTo(10, 0);
-        context.lineTo(-10, -7);
-        context.lineTo(-10, 7);
-        context.lineTo(10, 0);
+        context.arc(0,0,1,0,Math.PI*2,false); //Centre point
+        context.moveTo(15, 0);
+        context.lineTo(-5, -7);
+        context.lineTo(-5, 7);
+        context.lineTo(15, 0);
         if (thrusting) {
-            context.moveTo(-10, 0);
-            context.lineTo(-18, 0);
+            context.moveTo(-5, 0);
+            context.lineTo(-12, 0);
         }
         context.stroke();
         context.restore();

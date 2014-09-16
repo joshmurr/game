@@ -4,10 +4,11 @@ var particle = {
 	vx: 0,
 	vy: 0,
 	mass: 1,
-	direction: 1,
+	direction: -Math.PI/2,
 	radius: 0,
 	bounce: -1,
 	friction: 1,
+	turnSpeed: .1,
 	speed: 1,
 	gravity: 0,
 	springs: null,
@@ -78,11 +79,11 @@ var particle = {
 	},
 
 	turnRight: function(){
-		this.direction += 0.1;
+		this.direction += this.turnSpeed;
 	},
 
 	turnLeft: function(){
-		this.direction -= 0.1;
+		this.direction -= this.turnSpeed;
 	},
 
 	accelerate: function(ax, ay){
