@@ -1,4 +1,5 @@
-*A Game*
+A Game
+======
 
 Making a JavaScript game.
 
