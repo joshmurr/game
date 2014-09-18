@@ -5,6 +5,7 @@ var particle = {
 	vy: 0,
 	mass: 1,
 	direction: -Math.PI/2,
+	pointing: -Math.PI/2,
 	radius: 0,
 	bounce: -1,
 	friction: 1,
@@ -72,10 +73,10 @@ var particle = {
 		return Math.atan2(this.vy, this.vx);
 	},
 
-	setHeading: function(heading){
+	setHeading: function(){
 		var speed = this.getSpeed();
-		this.vx = Math.cos(heading) * speed;
-		this.vy = Math.sin(heading) * speed;
+		this.vx = Math.cos(this.pointing) * speed;
+		this.vy = Math.sin(this.pointing) * speed;
 	},
 
 	turnRight: function(){
@@ -86,6 +87,14 @@ var particle = {
 		this.direction -= this.turnSpeed;
 	},
 
+	rotateLeft: function(){
+		this.pointing -= this.turnSpeed;
+	},
+
+	rotateRight: function(){
+		this.pointing += this.turnSpeed;
+	},
+
 	accelerate: function(ax, ay){
 		this.vx += ax;
 		this.vy += ay;
@@ -94,7 +103,7 @@ var particle = {
 	update: function() {
 		this.handleSprings();
 		this.handleGravitations();
-		this.setHeading(this.direction);
+		//this.setHeading(this.direction);
 		this.vx *= this.friction;
 		this.vy *= this.friction;
 		this.vy += this.gravity;
