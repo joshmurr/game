@@ -15,10 +15,8 @@ window.onload = function() {
     // var cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame; // Unused for now....
     var start = window.mozAnimationStartTime; // Only supported in FF. Other browsers can use something like Date.now().
 
-
     ship.friction = 0.99;
     ship.speed = 3;
-    //ship.makeSmoke();
 
     document.body.addEventListener("keydown", function(event) {
         switch (event.keyCode) {
@@ -65,7 +63,7 @@ window.onload = function() {
         }
 
         ship.update();
-        smoke.update(ship.x,ship.y,ship.getHeading());
+        smoke.update(ship.x,ship.y,ship.pointing,thrusting);
         smoke.draw(context);
 
         if (ship.x > width) ship.x = 0;
@@ -85,7 +83,6 @@ window.onload = function() {
         if (thrusting) {
             context.moveTo(-5, 0);
             context.lineTo(-12, 0);
-            //ship.smokeP.topup();
         }
         context.stroke();
         context.restore();
