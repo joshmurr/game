@@ -1,0 +1,3 @@
+-Change setSpeed for ship to a more gentle acceleration.
+-Make all world layers centre at the same point.
+

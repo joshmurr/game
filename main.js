@@ -7,6 +7,10 @@ window.onload = function() {
         world = World.create(4000,4000);
         ship = Ship.create(width / 2, height / 2, 0, 0),
         smoke = Smoke.create(ship.x,ship.y),
+        border = {
+            x: width/2,
+            y: height/2
+        },
         turningLeft = false,
         turningRight = false,
         thrusting = false,
@@ -17,7 +21,7 @@ window.onload = function() {
     var start = window.mozAnimationStartTime; // Only supported in FF. Other browsers can use something like Date.now().
 
     ship.friction = 0.99;
-    ship.speed = 3;
+    ship.speed = 6;
 
     document.body.addEventListener("keydown", function(event) {
         switch (event.keyCode) {
@@ -73,6 +77,31 @@ window.onload = function() {
         // if (ship.x < 0) ship.x = width;
         // if (ship.y > height) ship.y = 0;
         // if (ship.y < 0) ship.y = height;
+
+        if (ship.x > width-border.x) {
+            ship.x = width-border.x;
+            for(var i=0; i<world.layers.length; i++){
+                world.layers[i].x -= ship.speed*world.layers[i].zindex;
+            }
+        }
+        if (ship.x < border.x) {
+            ship.x = border.x;
+            for(var i=0; i<world.layers.length; i++){
+                world.layers[i].x += ship.speed*world.layers[i].zindex;
+            }
+        }
+        if (ship.y > height-border.y) {
+            ship.y = height-border.y;
+            for(var i=0; i<world.layers.length; i++){
+                world.layers[i].y -= ship.speed*world.layers[i].zindex;
+            }
+        }
+        if (ship.y < border.y) {
+            ship.y = border.y;
+            for(var i=0; i<world.layers.length; i++){
+                world.layers[i].y += ship.speed*world.layers[i].zindex;
+            }
+        }
 
         context.save();
         context.translate(ship.x, ship.y);
