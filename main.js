@@ -4,6 +4,7 @@ window.onload = function() {
         context = canvas.getContext("2d"),
         width = canvas.width = window.innerWidth,
         height = canvas.height = window.innerHeight,
+        world = World.create(4000,4000);
         ship = Ship.create(width / 2, height / 2, 0, 0),
         smoke = Smoke.create(ship.x,ship.y),
         turningLeft = false,
@@ -55,6 +56,8 @@ window.onload = function() {
     function update() {
         context.clearRect(0, 0, width, height);
 
+        world.draw(context);
+
         if (turningRight) ship.rotateRight();
         if (turningLeft) ship.rotateLeft();
         if (thrusting) {
@@ -64,26 +67,28 @@ window.onload = function() {
 
         ship.update();
         smoke.update(ship.x,ship.y,ship.pointing,thrusting);
-        smoke.draw(context);
+        smoke.draw(context, 'lines');
 
-        if (ship.x > width) ship.x = 0;
-        if (ship.x < 0) ship.x = width;
-        if (ship.y > height) ship.y = 0;
-        if (ship.y < 0) ship.y = height;
+        // if (ship.x > width) ship.x = 0;
+        // if (ship.x < 0) ship.x = width;
+        // if (ship.y > height) ship.y = 0;
+        // if (ship.y < 0) ship.y = height;
 
         context.save();
         context.translate(ship.x, ship.y);
         context.rotate(ship.pointing);
         context.beginPath();
-        context.arc(0, 0, 1, 0, Math.PI * 2, false); //Centre point
+        //context.arc(0, 0, 1, 0, Math.PI * 2, false); //Centre point
         context.moveTo(15, 0);
         context.lineTo(-5, -7);
         context.lineTo(-5, 7);
         context.lineTo(15, 0);
-        if (thrusting) {
-            context.moveTo(-5, 0);
-            context.lineTo(-12, 0);
-        }
+        // if (thrusting) {
+        //     context.moveTo(-5, 0);
+        //     context.lineTo(-12, 0);
+        // }
+        context.fillStyle = "red";
+        context.fill();
         context.stroke();
         context.restore();
 

@@ -38,13 +38,35 @@ var Smoke = {
             }
         }
     },
-    draw: function(c) {
-        for (var i = 0; i < this.particles.length; i++) {
-            var p = this.particles[i];
-            c.beginPath();
-            c.arc(p.x, p.y, p.radius, 0, Math.PI * 2, false);
-            c.fillStyle = p.col;
-            c.fill();
-        }
+    draw: function(c, type) {
+        switch(type){
+            case 'lines':
+                for (var i = 0; i < this.particles.length; i++) {
+                    var p = this.particles[i];
+                    c.save();
+                    c.translate(p.x,p.y);
+                    c.rotate(p.getHeading());
+                    c.beginPath();
+                    c.moveTo(5,0);
+                    c.lineTo(utils.randomRange(2,20),0);
+                    c.strokeStyle = p.col;
+                    c.stroke();
+                    c.restore();
+                }
+                break;
+            default:
+                for (var i = 0; i < this.particles.length; i++) {
+                    var p = this.particles[i];
+                    c.save();
+                    c.translate(p.x,p.y);
+                    c.rotate(p.getHeading());
+                    c.beginPath();
+                    c.arc(10, 0, p.radius, 0, Math.PI * 2, false);
+                    c.fillStyle = p.col;
+                    c.fill();
+                    c.restore();
+                }
+                break;
+        } 
     }
 };
