@@ -1,4 +1,4 @@
-var particle = {
+var Particle = {
 	x: 0,
 	y: 0,
 	vx: 0,
@@ -8,11 +8,12 @@ var particle = {
 	bounce: -1,
 	friction: 1,
 	life: 0,
+	col: null,
 	gravity: 0,
 	springs: null,
 	gravitations: null,
 	
-	create: function(x,y,speed,direction,grav,lif){
+	create: function(x,y,speed,direction,grav, lif){
 		var obj = Object.create(this);
 		obj.x = x;
 		obj.y = y;
@@ -21,7 +22,7 @@ var particle = {
 		obj.gravity = grav || 0;
 		obj.springs = [];
 		obj.gravitations = [];
-		obj.life = lif;
+		obj.life = lif || 0;
 		return obj;
 	},
 
@@ -85,7 +86,7 @@ var particle = {
 	update: function() {
 		this.handleSprings();
 		this.handleGravitations();
-		if(this.life>0) this.life--;
+		if(this.life) this.life--;
 		this.vx *= this.friction;
 		this.vy *= this.friction;
 		this.vy += this.gravity;

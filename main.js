@@ -4,7 +4,8 @@ window.onload = function() {
         context = canvas.getContext("2d"),
         width = canvas.width = window.innerWidth,
         height = canvas.height = window.innerHeight,
-        ship = particle.create(width / 2, height / 2, 0, 0),
+        ship = Ship.create(width / 2, height / 2, 0, 0),
+        smoke = Smoke.create(ship.x,ship.y),
         turningLeft = false,
         turningRight = false,
         thrusting = false,
@@ -17,7 +18,7 @@ window.onload = function() {
 
     ship.friction = 0.99;
     ship.speed = 3;
-    ship.makeSmoke();
+    //ship.makeSmoke();
 
     document.body.addEventListener("keydown", function(event) {
         switch (event.keyCode) {
@@ -51,7 +52,6 @@ window.onload = function() {
         }
     });
 
-
     update();
 
     function update() {
@@ -65,6 +65,8 @@ window.onload = function() {
         }
 
         ship.update();
+        smoke.update(ship.x,ship.y,ship.getHeading());
+        smoke.draw(context);
 
         if (ship.x > width) ship.x = 0;
         if (ship.x < 0) ship.x = width;
@@ -83,26 +85,12 @@ window.onload = function() {
         if (thrusting) {
             context.moveTo(-5, 0);
             context.lineTo(-12, 0);
-            ship.updateSmoke();
+            //ship.smokeP.topup();
         }
         context.stroke();
         context.restore();
-        drawSmoke();
-
 
         requestAnimationFrame(update);
-    }
-
-    function drawSmoke() {
-        for (var i = 0; i < ship.smokeP.length; i++) {
-            if(ship.smokeP[i].life <= 0){
-                ship.smokeP.splice(i,1);//,particle.create(this.x,this.y,Math.random()*5,Math.random()*(Math.PI*2),0,10));
-            }
-            context.beginPath();
-            context.arc(ship.smokeP[i].x, ship.smokeP[i].y, 3, 0, Math.PI * 2, false);
-            context.fillStyle = "rgba(0,0,0,ship.smokeP[i].life/10)";
-            context.fill();
-        }
     }
 
 }
