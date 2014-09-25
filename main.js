@@ -4,7 +4,7 @@ window.onload = function() {
         context = canvas.getContext("2d"),
         width = canvas.width = window.innerWidth,
         height = canvas.height = window.innerHeight,
-        world = World.create(width / 2, height / 2,30,30),
+        world = World.create(width / 2, height / 2,300,300),
         ship = Ship.create(width / 2, height / 2, 0, 0),
         smoke = Smoke.create(ship.x,ship.y),
         border = {
@@ -26,7 +26,7 @@ window.onload = function() {
     //ship.speed = 6;
 
     world.makeLayers();
-    world.makeStuffInLayers();
+    //world.makeStuffInLayers();
 
     document.body.addEventListener("keydown", function(event) {
         switch (event.keyCode) {
