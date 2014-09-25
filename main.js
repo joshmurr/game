@@ -4,7 +4,7 @@ window.onload = function() {
         context = canvas.getContext("2d"),
         width = canvas.width = window.innerWidth,
         height = canvas.height = window.innerHeight,
-        world = World.create(30,30),
+        world = World.create(width / 2, height / 2,30,30),
         ship = Ship.create(width / 2, height / 2, 0, 0),
         smoke = Smoke.create(ship.x,ship.y),
         border = {
@@ -21,8 +21,9 @@ window.onload = function() {
     // var cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame; // Unused for now....
     var start = window.mozAnimationStartTime; // Only supported in FF. Other browsers can use something like Date.now().
 
-    ship.friction = 0.95;
-    ship.speed = 6;
+    ship.friction = 0;
+    world.friction = 0.9;
+    //ship.speed = 6;
 
     world.makeLayers();
     world.makeStuffInLayers();
@@ -71,9 +72,17 @@ window.onload = function() {
 
         world.draw(context);
 
-        if (turningRight) ship.rotateRight();
-        if (turningLeft) ship.rotateLeft();
+        if (turningRight) {
+            world.rotateRight();
+            ship.rotateRight();
+        }
+        if (turningLeft) {
+            world.rotateLeft();
+            ship.rotateLeft();
+        }
         if (thrusting) {
+            world.setSpeed();
+            world.setHeading();
             ship.setSpeed();
             ship.setHeading();
         }
@@ -85,6 +94,7 @@ window.onload = function() {
         ship.update();
         smoke.update(ship.x,ship.y,ship.pointing,thrusting);
         smoke.draw(context, 'lines');
+        world.update();
 
         // if (ship.x > width) ship.x = 0;
         // if (ship.x < 0) ship.x = width;
