@@ -4,24 +4,28 @@ window.onload = function() {
         context = canvas.getContext("2d"),
         width = canvas.width = window.innerWidth,
         height = canvas.height = window.innerHeight,
-        world = World.create(4000,4000);
+        world = World.create(30,30),
         ship = Ship.create(width / 2, height / 2, 0, 0),
         smoke = Smoke.create(ship.x,ship.y),
         border = {
-            x: width/2,
-            y: height/2
+            x: width/4,
+            y: height/4
         },
         turningLeft = false,
         turningRight = false,
         thrusting = false,
-        gamePaused = false;
+        gamePaused = false,
+        spacePress = false;
 
     var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
     // var cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame; // Unused for now....
     var start = window.mozAnimationStartTime; // Only supported in FF. Other browsers can use something like Date.now().
 
-    ship.friction = 0.99;
+    ship.friction = 0.95;
     ship.speed = 6;
+
+    world.makeLayers();
+    world.makeStuffInLayers();
 
     document.body.addEventListener("keydown", function(event) {
         switch (event.keyCode) {
@@ -33,6 +37,9 @@ window.onload = function() {
                 break;
             case 39: //right
                 turningRight = true;
+                break;
+            case 32: //space
+                spacePress = true;
                 break;
             case 80: //p
                 alert("PAUSED");
@@ -50,6 +57,8 @@ window.onload = function() {
                 break;
             case 39: //right
                 turningRight = false;
+            case 32: //space
+                spacePress = false;
             default:
                 break;
         }
@@ -68,7 +77,11 @@ window.onload = function() {
             ship.setSpeed();
             ship.setHeading();
         }
-
+        if(spacePress) {
+            world.layers[0].getData(2);
+            world.layers[1].getData(2);
+            world.layers[2].getData(2);
+        }
         ship.update();
         smoke.update(ship.x,ship.y,ship.pointing,thrusting);
         smoke.draw(context, 'lines');
@@ -81,25 +94,25 @@ window.onload = function() {
         if (ship.x > width-border.x) {
             ship.x = width-border.x;
             for(var i=0; i<world.layers.length; i++){
-                world.layers[i].x -= ship.speed*world.layers[i].zindex;
+                world.layers[i].x -= ship.getSpeed();//*world.layers[i].zindex;
             }
         }
         if (ship.x < border.x) {
             ship.x = border.x;
             for(var i=0; i<world.layers.length; i++){
-                world.layers[i].x += ship.speed*world.layers[i].zindex;
+                world.layers[i].x += ship.getSpeed();//*world.layers[i].zindex;
             }
         }
         if (ship.y > height-border.y) {
             ship.y = height-border.y;
             for(var i=0; i<world.layers.length; i++){
-                world.layers[i].y -= ship.speed*world.layers[i].zindex;
+                world.layers[i].y -= ship.getSpeed();//*world.layers[i].zindex;
             }
         }
         if (ship.y < border.y) {
             ship.y = border.y;
             for(var i=0; i<world.layers.length; i++){
-                world.layers[i].y += ship.speed*world.layers[i].zindex;
+                world.layers[i].y += ship.getSpeed();//*world.layers[i].zindex;
             }
         }
 
