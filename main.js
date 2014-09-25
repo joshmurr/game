@@ -4,7 +4,7 @@ window.onload = function() {
         context = canvas.getContext("2d"),
         width = canvas.width = window.innerWidth,
         height = canvas.height = window.innerHeight,
-        world = World.create(width / 2, height / 2,300,300),
+        world = World.create(width / 2, height / 2,3000,3000),
         ship = Ship.create(width / 2, height / 2, 0, 0),
         smoke = Smoke.create(ship.x,ship.y),
         border = {
@@ -22,11 +22,8 @@ window.onload = function() {
     var start = window.mozAnimationStartTime; // Only supported in FF. Other browsers can use something like Date.now().
 
     ship.friction = 0;
-    world.friction = 0.9;
-    //ship.speed = 6;
-
+    world.friction = 0.98;
     world.makeLayers();
-    //world.makeStuffInLayers();
 
     document.body.addEventListener("keydown", function(event) {
         switch (event.keyCode) {
@@ -86,51 +83,25 @@ window.onload = function() {
             ship.setSpeed();
             ship.setHeading();
         }
-        if(spacePress) {
-            world.layers[0].getData(2);
-            world.layers[1].getData(2);
-            world.layers[2].getData(2);
-        }
+
         ship.update();
         smoke.update(ship.x,ship.y,ship.pointing,thrusting);
         smoke.draw(context, 'lines');
         world.update();
 
-        // if (ship.x > width) ship.x = 0;
-        // if (ship.x < 0) ship.x = width;
-        // if (ship.y > height) ship.y = 0;
-        // if (ship.y < 0) ship.y = height;
-
-        if (ship.x > width-border.x) {
-            ship.x = width-border.x;
-            for(var i=0; i<world.layers.length; i++){
-                world.layers[i].x -= ship.getSpeed();//*world.layers[i].zindex;
-            }
-        }
-        if (ship.x < border.x) {
-            ship.x = border.x;
-            for(var i=0; i<world.layers.length; i++){
-                world.layers[i].x += ship.getSpeed();//*world.layers[i].zindex;
-            }
-        }
-        if (ship.y > height-border.y) {
-            ship.y = height-border.y;
-            for(var i=0; i<world.layers.length; i++){
-                world.layers[i].y -= ship.getSpeed();//*world.layers[i].zindex;
-            }
-        }
-        if (ship.y < border.y) {
-            ship.y = border.y;
-            for(var i=0; i<world.layers.length; i++){
-                world.layers[i].y += ship.getSpeed();//*world.layers[i].zindex;
-            }
-        }
-
+        /* TODO:
+        When world reaches limits, ship is then free to roam up to screen edges.
+        */
+        if (world.x > 0) world.x = 0;
+        if (world.x < -world.w) world.x = -world.w;
+        if (world.y > 0) world.y = 0;
+        if (world.y < -world.h) world.y = -world.h;
+        
         context.save();
         context.translate(ship.x, ship.y);
         context.rotate(ship.pointing);
         context.beginPath();
-        //context.arc(0, 0, 1, 0, Math.PI * 2, false); //Centre point
+        context.arc(0, 0, 1, 0, Math.PI * 2, false); //Centre point
         context.moveTo(15, 0);
         context.lineTo(-5, -7);
         context.lineTo(-5, 7);

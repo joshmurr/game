@@ -1,21 +1,23 @@
 var World = {
     w: 0,
     h: 0,
+    x:0,
+    y:0,
     vx: 0,
     vy: 0,
     direction:  Math.PI/2,
     pointing:   Math.PI/2,
     friction: 1,
     turnSpeed: .1,
-    numStuff: 10,
+    numStuff: 200,
     speed: 3,
     layers: [],
     create: function(x,y,w, h) {
         var obj = Object.create(this);
         obj.w = w;
         obj.h = h;
-        obj.x = x;
-        obj.y = y;
+        obj.x = -x/2;
+        obj.y = -y/2;
         obj.vx = Math.cos(this.direction) * this.speed;
         obj.vy = Math.sin(this.direction) * this.speed;
         return obj;
@@ -59,53 +61,24 @@ var World = {
         this.x += this.vx;
         this.y += this.vy;
     },
-    makeLayers: function(n) {
-        var layerN = {
-            w: this.w,
-            h: this.h,
-            circles: []
-        };
-        for (var i = 0; i < this.numStuff; i++) {
-            var c = {
-                x: Math.random() * this.w,
-                y: Math.random() * this.h,
-                r: 2,
-                col: 'rgba(0,' + Math.floor((Math.random() * 255) + 100) + ',0,0.5)',
-                shape: Math.PI * 2
-            }
-            layerN.circles.push(c);
-        }
-        var layerM = {
-            w: this.w,
-            h: this.h,
-            circles: []
-        };
-        for (var i = 0; i < this.numStuff; i++) {
-            var c = {
-                x: Math.random() * this.w,
-                y: Math.random() * this.h,
-                r: 2,
-                col: 'rgba(255,' + Math.floor((Math.random() * 255) + 100) + ',0,0.5)',
-                shape: Math.PI * 2
-            }
-            layerM.circles.push(c);
-        }
-
-        var layer1 = WorldLayer.create(this.w, this.h, 3);
-        layer1.col = 'rgba(255,0,0,0.5)'; //RED
-
-        var layer2 = WorldLayer.create(this.w, this.h, 2);
-        layer2.col = 'rgba(0,255,0,0.5)'; // GREEN
-
-        var layer3 = WorldLayer.create(this.w, this.h, 1);
-        layer3.col = 'rgba(0,0,255,0.5)'; // BLUE
-
-        this.layers.push(layer3,layer2,layer1,layerN, layerM);
+    makeLayers: function() {
+        var layerM = layer.create(this.w,this.h,this.makeStuff());
+        var layerN = layer.create(this.w,this.h,this.makeStuff());
+        this.layers.push(layerN, layerM);
     },
-    makeStuffInLayers: function(){
-    	for(var i=0; i<this.layers.length; i++){
-    		this.layers[i].makeThings();
-    	}
+    makeStuff: function(){
+        var tmp = [];
+    	for (var i = 0; i < this.numStuff; i++) {
+            var c = {
+                x: Math.random() * this.w,
+                y: Math.random() * this.h,
+                r: 10,
+                col: 'rgba('+Math.floor(Math.random() * 255)+','+Math.floor(Math.random()*255)+','+Math.floor(Math.random()*255)+',0.8)',
+                shape: Math.PI * 2
+            }
+            tmp.push(c);
+        }
+        return tmp;
     },
     draw: function(c) {
         c.save();
@@ -124,52 +97,15 @@ var World = {
     }
 };
 
-var WorldLayer = {
+var layer = {
     w: 0,
     h: 0,
-    x: 0,
-    y: 0,
-    numThings: 5,
-    type: '',
-    zindex: 1,
-    col: '',
     circles: [],
-    create: function(w, h, z) {
+    create: function(width, height, thing){
         var obj = Object.create(this);
-        obj.zindex = z;
-        obj.w = w;
-        obj.h = h;
-        // this.x = -w / 2;
-        // this.y = -h / 2;
-        //this.circles = this.makeThings();
+        obj.w = width;
+        obj.h = height;
+        obj.circles = thing;
         return obj;
-    },
-    makeThings: function() {
-        for (var i = 0; i < this.numThings; i++) {
-            var c = {
-                x: Math.random() * this.w,
-                y: Math.random() * this.h,
-                r: 2,
-                col: 'rgb(0,' + Math.floor((Math.random() * 255) + 100) + ',0)',
-                shape: Math.PI * 2
-            }
-            this.circles.push(c);
-        }
-    },
-    getData: function(n) {
-        console.log(n + ": " + this.circles[n].x);
-    },
-    draw: function(x,y,a,c) {
-        c.save();
-        c.translate(x, y);
-        //c.rotate(a);
-        for (var i = 0; i < this.circles.length; i++) {
-            var circ = this.circles[i];
-            c.beginPath();
-            c.arc(circ.x, circ.y, circ.r, 0, circ.shape, false);
-            c.fillStyle = this.col;
-            c.fill();
-        }
-        c.restore();
     }
-};
+}
