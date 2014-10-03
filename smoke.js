@@ -20,7 +20,6 @@ var Smoke = Particle.extend({
     limit: 50,
     particles: [],
     thrusting: false,
-    context: null,
     init: function() {
         for (var i = 0; i < this.limit; i++) {
             this.particles.push(newP(this.x, this.y));

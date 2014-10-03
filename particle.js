@@ -12,6 +12,7 @@ var Particle = {
     gravity: 0,
     springs: null,
     gravitations: null,
+    context: null,
 
     extend: function(props) {
         var prop, obj;

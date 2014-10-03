@@ -4,24 +4,71 @@ window.onload = function() {
         context = canvas.getContext("2d"),
         width = canvas.width = window.innerWidth,
         height = canvas.height = window.innerHeight,
-        // world = World.create(width / 2, height / 2,3000,3000),
-
-        //ship = Ship.create(width / 2, height / 2, 0, 0),
         ship = Ship.extend({
             x: width/2,
             y: height/2,
-            friction: 0
+            friction: 0,
+            context: context
         }),
-        world = World.extend({
-            x: -1500,
-            y: -1500,
-            w: 3000,
-            h: 3000,
+        worlds = {
+            worlds: [],
+            init: function(){
+                for(var i=0; i<this.worlds.length; i++){
+                    this.worlds[i].init();
+                }
+            },
+            draw: function(){
+                for(var i=0; i<this.worlds.length; i++){
+                    this.worlds[i].draw();
+                }
+            },
+            update: function(){
+                for(var i=0; i<this.worlds.length; i++){
+                    this.worlds[i].update();
+                }
+            },
+            rotateRight: function(){
+                for(var i=0; i<this.worlds.length; i++){
+                    this.worlds[i].rotateRight();
+                }
+            },
+            rotateLeft: function(){
+                for(var i=0; i<this.worlds.length; i++){
+                    this.worlds[i].rotateLeft();
+                }
+            },
+            move: function(){
+                for(var i=0; i<this.worlds.length; i++){
+                    this.worlds[i].setSpeed(this.worlds[i].speed);
+                    this.worlds[i].setHeading(this.worlds[i].pointing);
+                }
+            }
+        }
+        worldSize = 3000,
+        circleWorld = World.extend({
+            x: -worldSize/2,
+            y: -worldSize/2,
+            w: worldSize,
+            h: worldSize,
             pointing: Math.PI/2,
             friction: 0.98,
             speed: 3,
             vx: 0,
             vy: 0,
+            type: 'circles',
+            context: context
+        }),
+        squareWorld = World.extend({
+            x: -worldSize/2,
+            y: -worldSize/2,
+            w: worldSize,
+            h: worldSize,
+            pointing: Math.PI/2,
+            friction: 0.98,
+            speed: 2,
+            vx: 0,
+            vy: 0,
+            type: 'squares',
             context: context
         }),
         smoke = Smoke.extend({
@@ -39,11 +86,10 @@ window.onload = function() {
     // var cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame; // Unused for now....
     var start = window.mozAnimationStartTime; // Only supported in FF. Other browsers can use something like Date.now().
 
-    // ship.friction = 0;
-    // world.friction = 0.98;
-    // world.speed = 3;
+    worlds.worlds.push(circleWorld,squareWorld);
+    worlds.init();
     smoke.init();
-    world.makeLayers();
+    // circleWorld.makeLayers();
 
     document.body.addEventListener("keydown", function(event) {
         switch (event.keyCode) {
@@ -86,55 +132,39 @@ window.onload = function() {
 
     function update() {
         context.clearRect(0, 0, width, height);
-
-        world.draw(context);
+        // circleWorld.draw();
 
         if (turningRight) {
-            world.rotateRight();
+            worlds.rotateRight();
             ship.rotateRight();
         }
         if (turningLeft) {
-            world.rotateLeft();
+            worlds.rotateLeft();
             ship.rotateLeft();
         }
         if (thrusting) {
-            world.setSpeed(world.speed);
-            world.setHeading(world.pointing);
+            worlds.move();
             ship.setSpeed(ship.speed);
             ship.setHeading(ship.pointing);
         }
 
-        ship.update();
         smoke.update(ship.x,ship.y,ship.pointing,thrusting);
         smoke.draw('lines');
-        world.update();
+
+        // circleWorld.update();
+        worlds.update();
+        worlds.draw();
+
+        ship.update();
+        ship.draw();
 
         /* TODO:
-        When world reaches limits, ship is then free to roam up to screen edges.
+        When circleWorld reaches limits, ship is then free to roam up to screen edges.
         */
-        // if (world.x > 0) world.x = 0;
-        // if (world.x < -world.w) world.x = -world.w;
-        // if (world.y > 0) world.y = 0;
-        // if (world.y < -world.h) world.y = -world.h;
-        
-        context.save();
-        context.translate(ship.x, ship.y);
-        context.rotate(ship.pointing);
-        context.beginPath();
-        context.arc(0, 0, 1, 0, Math.PI * 2, false); //Centre point
-        context.moveTo(15, 0);
-        context.lineTo(-5, -7);
-        context.lineTo(-5, 7);
-        context.lineTo(15, 0);
-        // if (thrusting) {
-        //     context.moveTo(-5, 0);
-        //     context.lineTo(-12, 0);
-        // }
-        context.fillStyle = "red";
-        context.fill();
-        context.stroke();
-        context.restore();
-
+        // if (circleWorld.x > 0) circleWorld.x = 0;
+        // if (circleWorld.x < -circleWorld.w) circleWorld.x = -circleWorld.w;
+        // if (circleWorld.y > 0) circleWorld.y = 0;
+        // if (circleWorld.y < -circleWorld.h) circleWorld.y = -circleWorld.h;
         requestAnimationFrame(update);
     }
 
