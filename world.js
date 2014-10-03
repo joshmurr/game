@@ -1,10 +1,21 @@
 var World = Ship.extend({
+    size: 0,
+    z_index: 0,
+    x: 0,
+    y: 0,
     w: 0,
     h: 0,
-    numStuff: 200,
+    pointing: Math.PI/2,
+    friction: 0.98,
     layer: [],
     type: null,
-    init: function() {
+    debug: false,
+    init: function(z,size_) {
+        this.z_index = z;
+        console.log(this.z_index + this.type);
+        this.size = size_*(z+1);
+        this.x = this.y = -this.size/2;
+        this.w = this.h = this.size;
         switch(this.type){
             case 'squares':
                 for(var i=0; i<this.numStuff; i++){
@@ -35,7 +46,11 @@ var World = Ship.extend({
 
     draw: function() {
         this.context.save();
-        this.context.translate(this.x, this.y);
+        this.context.translate(this.canvasWidth/2+this.x, this.canvasHeight/2+this.y);
+        if(this.debug) {
+            this.context.rect(0,0,this.w,this.h);
+            this.context.stroke();
+        }
         switch(this.type){
             case 'squares':
                for (var i = 0; i < this.layer.length; i++) {

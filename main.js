@@ -13,8 +13,8 @@ window.onload = function() {
         worlds = {
             worlds: [],
             init: function(){
-                for(var i=0; i<this.worlds.length; i++){
-                    this.worlds[i].init();
+                for(var i=this.worlds.length-1; i>-1; i--){
+                    this.worlds[i].init(i,4000);
                 }
             },
             draw: function(){
@@ -44,30 +44,23 @@ window.onload = function() {
                 }
             }
         }
-        worldSize = 3000,
         circleWorld = World.extend({
-            x: -worldSize/2,
-            y: -worldSize/2,
-            w: worldSize,
-            h: worldSize,
-            pointing: Math.PI/2,
-            friction: 0.98,
-            speed: 3,
+            canvasWidth: width,
+            canvasHeight: height,
+            speed: 2,
             vx: 0,
             vy: 0,
+            numStuff: 50,
             type: 'circles',
             context: context
         }),
         squareWorld = World.extend({
-            x: -worldSize/2,
-            y: -worldSize/2,
-            w: worldSize,
-            h: worldSize,
-            pointing: Math.PI/2,
-            friction: 0.98,
-            speed: 2,
+            canvasWidth: width,
+            canvasHeight: height,
+            speed: 3,
             vx: 0,
             vy: 0,
+            numStuff: 200,
             type: 'squares',
             context: context
         }),
@@ -132,7 +125,6 @@ window.onload = function() {
 
     function update() {
         context.clearRect(0, 0, width, height);
-        // circleWorld.draw();
 
         if (turningRight) {
             worlds.rotateRight();
@@ -148,13 +140,11 @@ window.onload = function() {
             ship.setHeading(ship.pointing);
         }
 
-        smoke.update(ship.x,ship.y,ship.pointing,thrusting);
-        smoke.draw('lines');
-
-        // circleWorld.update();
         worlds.update();
         worlds.draw();
 
+        smoke.update(ship.x,ship.y,ship.pointing,thrusting);
+        smoke.draw('lines');
         ship.update();
         ship.draw();
 
