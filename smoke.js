@@ -1,24 +1,30 @@
-var newP = function(x, y, heading) {
-    var p = Particle.create(x, y, (Math.random() * 5) + 1, utils.randomRange(heading - 0.5, heading + 0.5) - Math.PI, 0, utils.randomRange(10, 20));
-    p.radius = Math.random() * 3;
-    p.col = 'rgb(' + Math.floor((Math.random() * 255)) + ',0,' + Math.floor(utils.randomRange(100, 255)) + ')';
+var newP = function(x_, y_, heading_) {
+    //var p = Particle.create(x, y, (Math.random() * 5) + 1, utils.randomRange(heading - 0.5, heading + 0.5) - Math.PI, 0, utils.randomRange(10, 20));
+    var h = utils.randomRange(heading_ - 0.5, heading_ + 0.5) - Math.PI,
+        s = (Math.random() * 5) + 1,
+        p = Particle.extend({
+            x: x_,
+            y: y_,
+            vx: Math.cos(h) * s,
+            vy: Math.sin(h) * s,
+            life: utils.randomRange(10, 20),
+            radius: Math.random()*3,
+            col: 'rgb(' + Math.floor((Math.random() * 255)) + ',0,' + Math.floor(utils.randomRange(100, 255)) + ')'
+        });
+    //p.radius = Math.random() * 3;
+    //p.col = 'rgb(' + Math.floor((Math.random() * 255)) + ',0,' + Math.floor(utils.randomRange(100, 255)) + ')';
     return p;
 }
 
-var Smoke = {
-    x: 0,
-    y: 0,
+var Smoke = Particle.extend({
     limit: 50,
     particles: [],
     thrusting: false,
-    create: function(x, y) {
-        var obj = Object.create(this);
-        obj.x = x;
-        obj.y = y;
+    context: null,
+    init: function() {
         for (var i = 0; i < this.limit; i++) {
-            this.particles.push(newP(x, y));
+            this.particles.push(newP(this.x, this.y));
         }
-        return obj;
     },
 
     update: function(x, y, heading, thrusting) {
@@ -34,39 +40,39 @@ var Smoke = {
         }
         if (thrusting) {
             while (this.particles.length < this.limit) {
-                this.particles.push(newP(x, y, heading));
+                this.particles.push(newP(this.x, this.y, heading));
             }
         }
     },
-    draw: function(c, type) {
+    draw: function(type) {
         switch(type){
             case 'lines':
                 for (var i = 0; i < this.particles.length; i++) {
                     var p = this.particles[i];
-                    c.save();
-                    c.translate(p.x,p.y);
-                    c.rotate(p.getHeading());
-                    c.beginPath();
-                    c.moveTo(5,0);
-                    c.lineTo(utils.randomRange(2,20),0);
-                    c.strokeStyle = p.col;
-                    c.stroke();
-                    c.restore();
+                    this.context.save();
+                    this.context.translate(p.x,p.y);
+                    this.context.rotate(p.getHeading());
+                    this.context.beginPath();
+                    this.context.moveTo(5,0);
+                    this.context.lineTo(utils.randomRange(2,20),0);
+                    this.context.strokeStyle = p.col;
+                    this.context.stroke();
+                    this.context.restore();
                 }
                 break;
             default:
                 for (var i = 0; i < this.particles.length; i++) {
                     var p = this.particles[i];
-                    c.save();
-                    c.translate(p.x,p.y);
-                    c.rotate(p.getHeading());
-                    c.beginPath();
-                    c.arc(10, 0, p.radius, 0, Math.PI * 2, false);
-                    c.fillStyle = p.col;
-                    c.fill();
-                    c.restore();
+                    this.context.save();
+                    this.context.translate(p.x,p.y);
+                    this.context.rotate(p.getHeading());
+                    this.context.beginPath();
+                    this.context.arc(10, 0, p.radius, 0, Math.PI * 2, false);
+                    this.context.fillStyle = p.col;
+                    this.context.fill();
+                    this.context.restore();
                 }
                 break;
         } 
     }
-};
+});

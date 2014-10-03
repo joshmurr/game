@@ -4,13 +4,31 @@ window.onload = function() {
         context = canvas.getContext("2d"),
         width = canvas.width = window.innerWidth,
         height = canvas.height = window.innerHeight,
-        world = World.create(width / 2, height / 2,3000,3000),
-        ship = Ship.create(width / 2, height / 2, 0, 0),
-        smoke = Smoke.create(ship.x,ship.y),
-        border = {
-            x: width/4,
-            y: height/4
-        },
+        // world = World.create(width / 2, height / 2,3000,3000),
+
+        //ship = Ship.create(width / 2, height / 2, 0, 0),
+        ship = Ship.extend({
+            x: width/2,
+            y: height/2,
+            friction: 0
+        }),
+        world = World.extend({
+            x: -1500,
+            y: -1500,
+            w: 3000,
+            h: 3000,
+            pointing: Math.PI/2,
+            friction: 0.98,
+            speed: 3,
+            vx: 0,
+            vy: 0,
+            context: context
+        }),
+        smoke = Smoke.extend({
+            x:ship.x,
+            y:ship.y,
+            context: context,
+        }),
         turningLeft = false,
         turningRight = false,
         thrusting = false,
@@ -21,8 +39,10 @@ window.onload = function() {
     // var cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame; // Unused for now....
     var start = window.mozAnimationStartTime; // Only supported in FF. Other browsers can use something like Date.now().
 
-    ship.friction = 0;
-    world.friction = 0.98;
+    // ship.friction = 0;
+    // world.friction = 0.98;
+    // world.speed = 3;
+    smoke.init();
     world.makeLayers();
 
     document.body.addEventListener("keydown", function(event) {
@@ -78,24 +98,24 @@ window.onload = function() {
             ship.rotateLeft();
         }
         if (thrusting) {
-            world.setSpeed();
-            world.setHeading();
-            ship.setSpeed();
-            ship.setHeading();
+            world.setSpeed(world.speed);
+            world.setHeading(world.pointing);
+            ship.setSpeed(ship.speed);
+            ship.setHeading(ship.pointing);
         }
 
         ship.update();
         smoke.update(ship.x,ship.y,ship.pointing,thrusting);
-        smoke.draw(context, 'lines');
+        smoke.draw('lines');
         world.update();
 
         /* TODO:
         When world reaches limits, ship is then free to roam up to screen edges.
         */
-        if (world.x > 0) world.x = 0;
-        if (world.x < -world.w) world.x = -world.w;
-        if (world.y > 0) world.y = 0;
-        if (world.y < -world.h) world.y = -world.h;
+        // if (world.x > 0) world.x = 0;
+        // if (world.x < -world.w) world.x = -world.w;
+        // if (world.y > 0) world.y = 0;
+        // if (world.y < -world.h) world.y = -world.h;
         
         context.save();
         context.translate(ship.x, ship.y);
