@@ -1,3 +1,2 @@
--Change setSpeed for ship to a more gentle acceleration.
--Make all world layers centre at the same point.
-
+-Make ship free to roam when world layers reach limits.
+-Add 'sprint' with spacebar (or something) and narrow thrust particles.

@@ -22,8 +22,8 @@ var World = Ship.extend({
                     t = {
                         x: Math.random()*this.w,
                         y: Math.random()*this.h,
-                        w: Math.random()*100,
-                        h: Math.random()*100,
+                        w: Math.random()*300,
+                        h: Math.random()*300,
                         col: 'rgb('+Math.floor(Math.random()*255)+',255,255)'
                     }
                     this.layer.push(t);
@@ -35,7 +35,7 @@ var World = Ship.extend({
                     t = {
                         x: Math.random()*this.w,
                         y: Math.random()*this.h,
-                        r: Math.random()*100,
+                        r: Math.random()*300,
                         col: 'rgb(255,'+Math.floor(Math.random()*255)+',255)'
                     }
                     this.layer.push(t);
